@@ -1,0 +1,26 @@
+src/
+    |---pages/
+    |   |-----home.html
+    |   |-----about.html
+    |   |-----product.html
+    |   |-----addproduct.html
+    |   |-----login.html
+    |   |-----signup.html    
+    |   |-----cart.html
+    |   |-----checkout.html     
+    |---components/
+    |   |-----header.html
+    |   |-----footer.html
+    |---css/
+    |   |---style.css 
+    |---js/
+    |   |---script.js
+    |   |---login.js    
+    |   |---signup.js
+    |---images/
+    |   |---image1.jpg
+    |   |---image2.jpg
+    |   |---image3.jpg
+    |   |---image4.jpg
+    |   |---and so on
+   

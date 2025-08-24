@@ -1,0 +1,100 @@
+*{
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    list-style: none;
+    text-decoration: none;
+}
+.premuim-black{
+    background: linear-gradient(to bottom , #131313dc 0% , #000000 100%);
+    /* box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.5); */
+}
+img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.text-orange{
+    color: orangered;
+}
+.bg-orange{
+    background-color: orangered !important;
+}
+.btn{
+    transition: all 0.5 ease;
+    align-items: center;
+}
+.btn:hover{
+    transform: translateY(-2px);
+}
+svg{
+    fill: orangered;
+}
+a{
+    text-decoration: none;
+}
+/* ====================================================key frames===================================================== */
+@keyframes change {
+    0%   {background-image: url(../images/bg1.jpg);}
+    33%  {background-image: url(../images/bg2.jpg); }
+    66%  {background-image: url(../images/bg3.jpg);}
+    100% {background-image: url(../images/bg1.jpg);}
+}
+@keyframes fadeIn {
+    0%   {opacity: 0;}
+    100% {opacity: 1;}
+}
+/* ============================================================================================================== */
+/* hero section  */
+.hero{
+    position: relative;
+    width: 100%;
+    height: 86vh;
+    overflow: hidden;
+    animation: change 15s infinite;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    background-blend-mode: multiply;
+}
+
+.hero .bg-slide{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero-content{
+    z-index: 10;
+    position: absolute;
+    margin :calc(15px + 5vw) calc(30px + 10vw);
+    max-width: 600px;
+    /* animation: fadeIn 5s ease-in-out; */
+}  
+.hero-content > *{
+    opacity: 0;
+    transition: opacity 1s ease , transform 1s ease;
+    transform: translateY(-30px);
+} 
+.hero-content > *.appear {
+    transform: translateY(0);
+    opacity: 1;
+}
+.text-huge{font-size: calc(30px + 3vw);}
+
+/* cards  */
+.card{
+    overflow: hidden;
+}
+.card-img{
+    transform: scale(1);
+    transition: transform 0.6s ease;
+}
+.card-img:hover{
+    transform: scale(1.07);
+}
+
+
+
+
