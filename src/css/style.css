@@ -55,10 +55,10 @@ a{
 }
 /* ====================================================key frames===================================================== */
 @keyframes change {
-    0%   {background-image: url(../images/bg1.jpg);}
-    33%  {background-image: url(../images/bg2.jpg); }
-    66%  {background-image: url(../images/bg3.jpg);}
-    100% {background-image: url(../images/bg1.jpg);}
+    0%   {background-image: url(../assets/images/bgs/bg1.jpg)}
+    33%  {background-image: url(../assets/images/bgs/bg2.jpg); }
+    66%  {background-image: url(../assets/images/bgs/bg3.jpg);}
+    100% {background-image: url(../assets/images/bgs/bg1.jpg);}
 }
 @keyframes fadeIn {
     0%   {opacity: 0;}
@@ -71,7 +71,7 @@ a{
     width: 100%;
     min-height: 86dvh;
     overflow: hidden;
-    animation: change 15s infinite;
+    animation: change 12s infinite;
     background-size: cover;
     background-position: center;
     background-color: rgba(0, 0, 0, 0.6);
@@ -101,10 +101,6 @@ a{
     transition: opacity 1s ease , transform 1s ease;
     transform: translateY(-30px);
 } 
-.hero-content > *.appear {
-    transform: translateY(0);
-    opacity: 1;
-}
 .text-huge{font-size: calc(30px + 3vw);}
 
 /* cards  */
@@ -202,4 +198,30 @@ footer svg{
 }
 .card:hover .bg-orange-overlay{
     transform: translateY(0);
+}
+
+
+/* products page  */
+.ocean-overlay{
+    background-color: #0000007c;
+}
+
+
+
+.products-hero-content > *{
+    opacity: 0;
+    transition: opacity 1s ease , transform 1s ease;
+} 
+.products-hero-content > h1:first-child{
+    transform: translateY(-40px);
+}
+.products-hero-content > h1:nth-child(2){
+    transform: translateX(-50px);
+}
+.products-hero-content > h1:last-child{
+    transform: translateY(40px);
+}
+.appear {
+    transform: translate(0) !important;
+    opacity: 1;
 }

@@ -48,12 +48,20 @@ fetch("../components/footer.html").then(response => response.text()).then(data =
 })
   
 
-const heroContent = document.querySelectorAll('.hero-content > *')
-heroContent.forEach((hc, idx) => {
-  setTimeout(() =>{
-      hc.classList.add('appear')
-  },2500 +  idx * 800);
-})
+function staggerAppear(elements, baseDelay, stepDelay) {
+  elements.forEach((el, idx) => {
+    setTimeout(() => {
+      el.classList.add('appear');
+    }, baseDelay + idx * stepDelay);
+  });
+}
+
+const heroContent = document.querySelectorAll('.hero-content > *');
+const productsHeroContent = document.querySelectorAll('.products-hero-content > *');
+
+staggerAppear(heroContent, 2500, 800);
+staggerAppear(productsHeroContent, 2000, 800);
+
 
 let swiper = new Swiper('.swiper', {
   direction: 'horizontal',    
@@ -89,6 +97,52 @@ let swiper = new Swiper('.swiper', {
   },
 });
 
+
+const collection_container = document.getElementById('products-section')
+const collection = [
+  {
+    name: 'navy slim polo',
+    old_price: 1100.00 ,
+    new_price : 599.00 ,
+    img : 'collection5.webp'
+  },
+  {
+    name: 'ment-green polo',
+    old_price: 700.00 ,
+    new_price : 299.00 ,
+    img : 'collection6.webp'
+  },
+  {
+    name: 'gray polo',
+    old_price: 900.00 ,
+    new_price : 499.00 ,
+    img : 'collection7.jpg'
+  },
+  {
+    name: 'long-slive gray polo',
+    old_price: 900.00 ,
+    new_price : 499.00 ,
+    img : 'collection8.webp'
+  },
+  {
+    name: 'long-slieve polo',
+    old_price: 999.99 ,
+    new_price : 599.00 ,
+    img : 'collection12.jpg'
+  },
+  {
+    name: 'long-slieve sweater',
+    old_price: 899.99 ,
+    new_price : 499.00 ,
+    img : 'collection13.webp'
+  },
+  {
+    name: 'long-slieve-coffe polo',
+    old_price: 999.99 ,
+    new_price : 599.00 ,
+    img : 'collection12.jpg'
+  },
+]
 
 
 
