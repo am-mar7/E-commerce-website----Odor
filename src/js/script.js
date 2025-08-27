@@ -6,7 +6,6 @@ fetch("../components/header.html").then(response => response.text()).then(data =
     const navParts = document.querySelectorAll('.navpart')
     const navtext = document.querySelectorAll('.nav-item > *')
     const navbar = document.querySelector('.navbar-expand-md')
-    const cartIcon = document.querySelector('.nav-item svg')
     window.addEventListener('scroll', () => {
       if (window.scrollY > 80) {
         navParts[0].classList.add('hidden')
@@ -16,7 +15,6 @@ fetch("../components/header.html").then(response => response.text()).then(data =
         navtext.forEach((text) => {
           text.classList.add('text-light')
         })
-        cartIcon.style.fill = '#f8f8f8'
         navParts[1].classList.remove('border-bottom')
       }
       else {
@@ -28,7 +26,6 @@ fetch("../components/header.html").then(response => response.text()).then(data =
           text.classList.remove('text-light')
         })
         navParts[1].classList.add('border-bottom')
-        cartIcon.style.fill = 'orangered'
       }
     })
 
@@ -176,6 +173,38 @@ const products = [
     data: t_shirts,
   },
 ]
+const blogs = [
+  {
+    title :'A Day in Odor - Styled by Hussein Nassar',
+    content: 'Watch how Hussein Nassar turns a regular day into a fashion statement with Odor. From effortless morning fits to refined evening looks.',
+    url :'../assets/videos/Hussein Nasser.mp4'
+  },
+  {
+    title :'Style Challenge with Odor',
+    content: "Can you create 3 looks from one brand? They took on the challenge using Odor's latest collection. Clean lines, perfect fits, and style that works from day to night.",
+    url :'../assets/videos/style with odor.mp4'
+  },
+  {
+    title :'First Impressions: Is Odor Worth It?',
+    content: 'Omar Ashraf gives an honest review after trying Odor for the first time. Fit, fabric, comfort, and design—see what makes Odor a go-to brand',
+    url :'../assets/videos/irst impressions.mp4'
+  },
+  {
+    title :'Behind the Shoot—Odor Collection BTS',
+    content: 'Go behind the scenes of Odor’s latest campaign shoot with Menna El Sonny. Styling, premium details, and how pieces come to life.',
+    url :'../assets/videos/Dress like a pro.mp4'
+  },
+  {
+    title :'Dress Like a Pro with Odor',
+    content: 'Muhamed Adel shares tips on how to elevate your everyday wardrobe with just a few pieces from Odor.',
+    url :'../assets/videos/Behind the school.mp4'
+  }, 
+  {
+    title :"What's New at Odor? Try-On Haul!",
+    content: 'Watch how Hussein Nassar turns a regular day into a fashion statement with Odor. From effortless morning fits to refined evening looks.',
+    url :"../assets/videos/what's a new.mp4"
+  },
+]
 const base_collections_url = '../assets/images/collection/'
 const rows = Math.ceil((shirts.length + t_shirts.length + polos.length) / 4), cols = 4
 const heroContent = document.querySelectorAll('.hero-content > *');
@@ -183,6 +212,8 @@ const productsHeroContent = document.querySelectorAll('.products-hero-content > 
 const collection_container = document.getElementById('products-section')
 const swiperCardsContainer = document.getElementById('swiper-cards-container')
 const swiperCardsNUmber = 6
+const blogsContainer = document.getElementById('blogs-section')
+const blogRows = Math.ceil(blogs.length / 2)
 // functions
 
 function staggerAppear(elements, baseDelay, stepDelay) {
@@ -215,6 +246,26 @@ function makeCard(productUrl , productName , productOld_price , productNew_price
           </p>
       </div>
   </div>
+  `
+}
+function makeBlogCard(title , url , content){
+  return `
+  <article class="card h-100 shadow-sm">
+        <div class="ratio ratio-16x9 position-relative embed-cover">
+          <iframe
+            src="${url}"
+            title="${title}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+            class="border-0">
+          </iframe>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h1 class="card-title fs-5 mb-2">${title}</h1>
+          <p class="card-text text-muted mb-0">${content}</p>           
+        </div>
+      </article>
   `
 }
 function makeSwiperCard(productUrl , productName , productOld_price , productNew_price){
@@ -287,6 +338,25 @@ function fillProductsPage(){
     collection_container.appendChild(row)
   }
 }
+function fillBlogsPage(){
+  index = 0
+  for (let i = 0; i < blogRows ; i++) {
+    const row = document.createElement('div')
+    row.className = 'row pt-5 gy-5 d-flex justify-content-evenly'
+    for (let j = 0; j < 2; j++) {
+      const col = document.createElement('div')
+      col.className = 'col-8 col-lg-6 col-xxl-5'
+      let product = blogs[index]
+      index += 1
+      console.log(product.url)
+      if (!product)
+        break
+      col.innerHTML = makeBlogCard(product.title , product.url, product.content)
+      row.appendChild(col)
+    }
+    blogsContainer.appendChild(row)
+  }
+}
 console.log(window.location.pathname.includes('home.html'))
 if (window.location.pathname.includes('home.html')){
   staggerAppear(heroContent, 2000, 800);
@@ -296,10 +366,9 @@ if (window.location.pathname.includes('products.html')){
   staggerAppear(productsHeroContent, 1000, 800);
   fillProductsPage()
 }
-
-
-// programming the Allproducts page 
-
+if (window.location.pathname.includes('blog.html')){
+  fillBlogsPage()
+}
 
 
 

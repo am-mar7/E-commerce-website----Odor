@@ -1,34 +1,75 @@
+<!-- header.html -->
 <div class="premuim-black text-white py-3 navpart">
     <div class="container d-flex justify-content-between align-items-center">
-    <a href="home.html" class="navbar-brand text-white fw-bold fs-3">ODOR</a>
-    
-    <div>
+      <a href="home.html" class="navbar-brand text-white fw-bold fs-3">ODOR</a>
+  
+      <div class="d-flex align-items-center gap-2">
         <a href="../pages/login.html" class="btn btn-outline-light me-2">Login</a>
-        <a href="../pages/signup.html" class="btn bg-orange text-light ">Sign Up</a>
-    </div>
-    </div>
-</div>
-
-<nav class="navbar navbar-expand-md navbar-light bg-light navpart border-bottom">
-    <div class="container">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-                data-bs-target="#navbarNav" aria-controls="navbarNav" 
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <a href="../pages/signup.html" class="btn bg-orange text-light me-2">Sign Up</a>
+  
+        <!-- Cart Toggle -->
         
-        <div class="collapse navbar-collapse py-1" id="navbarNav">
-            <ul class="navbar-nav mx-auto gap-1 gap-md-5">
-            <li class="nav-item"><a class="nav-link active" href="home.html">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="products.html">All Products</a></li>
-            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-            <li class="nav-item"><a class="nav-link" href="blog.html">blog</a></li>
-            <li class="nav-item"><a class="nav-link" href="cart.html"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/></svg></a></li>
-            </ul>
-        </div>
+      </div>
     </div>
-</nav>
+  </div>
+  
+  <nav class="navbar navbar-expand-md navbar-light bg-light navpart border-bottom">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarNav" aria-controls="navbarNav"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <div class="collapse navbar-collapse py-1" id="navbarNav">
+        <ul class="navbar-nav mx-auto gap-1 gap-md-5">
+          <li class="nav-item"><a class="nav-link active" href="home.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="products.html">All Products</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+      <button
+        id="cartToggleBtn"
+        class="btn btn-transparent d-flex align-items-center gap-2"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#cartOffcanvas"
+        aria-controls="cartOffcanvas"
+        aria-label="Open cart"
+        type="button"
+      >
+        <!-- simple cart icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#e3e3e3"><path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/></svg>
+        <span id="cartCountBadge" class="badge bg-warning text-dark ms-2 d-none">0</span>
+      </button>
+    </div>
 
-
-
+  </nav>
+  
+  <!-- Offcanvas Cart (slides from right) -->
+  <div class="offcanvas offcanvas-end cart-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title text-white" id="cartOffcanvasLabel">Your Cart</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close cart">Close</button>
+    </div>
+  
+    <div class="offcanvas-body p-0 d-flex flex-column">
+      <!-- Cart items scroll area -->
+      <div id="cartItemsWrap" class="flex-grow-1 overflow-auto p-3">
+        <ul id="cartItemsList" class="list-group list-group-flush"></ul>
+      </div>
+  
+      <!-- Cart footer (summary + checkout) -->
+      <div class="cart-footer p-3 border-top">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="small text-muted">Subtotal</div>
+          <div id="cartSubtotal" class="fs-5 fw-bold">0.00 LE</div>
+        </div>
+        <div class="d-grid gap-2">
+          <button id="checkoutBtn" class="btn btn-orange btn-lg">Checkout</button>
+          <button id="clearCartBtn" class="btn btn-outline-light">Clear Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
   

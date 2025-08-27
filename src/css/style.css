@@ -9,8 +9,10 @@ body{
     margin: 0 !important;
 }
 .premuim-black{
-    background: linear-gradient(to bottom , #131313dc 0% , #000000 100%);
-    /* box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.5); */
+    background: linear-gradient(to bottom , #0c0c0cec 0% , #000000 100%);
+}
+.premuim-black-reverse{
+    background: linear-gradient(to bottom , #000000 0% , #0c0c0cec 100%);
 }
 svg{
     fill: orangered;
@@ -242,4 +244,18 @@ footer svg{
 .autoshow{
     animation: autoshow_animation both ease-in-out;
     animation-timeline: view(60%  20%);
+}
+.embed-cover { position: relative; overflow: hidden; }
+
+/* Force iframe to cover container: fill height & be at least as wide as container */
+.embed-cover iframe,
+.embed-cover video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 100%;      /* fill height */
+  min-width: 100%;   /* ensure width at least container width so no thin column */
+  transform: translate(-50%, -50%); /* center */
+  border: 0;
+  display: block;
 }
