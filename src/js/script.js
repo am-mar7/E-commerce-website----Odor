@@ -205,6 +205,21 @@ const blogs = [
     url :"../assets/videos/what's a new.mp4"
   },
 ]
+const rowObserver = new IntersectionObserver((entries, obs) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+
+    // only animate our intended columns
+    const cols = entry.target.querySelectorAll('.col-animate');
+
+    cols.forEach((col, i) => {
+      setTimeout(() => col.classList.add('appear'), i * 150); // 150ms between cols
+    });
+
+    obs.unobserve(entry.target); // run once per row
+  });
+}, { threshold: 0.15 });
+
 const base_collections_url = '../assets/images/collection/'
 const rows = Math.ceil((shirts.length + t_shirts.length + polos.length) / 4), cols = 4
 const heroContent = document.querySelectorAll('.hero-content > *');
@@ -313,14 +328,16 @@ function fillSwiper(){
 function fillProductsPage(){
   let products_idx = 0
   reset_products_indeices()
+
   for (let i = 0; i < rows; i++) {
     const row = document.createElement('div')
-    console.log(1 ,row)
-    row.className = 'row pt-5 gy-5 w-100 d-flex justify-content-evenly autoshowCards'
+    row.className = 'row pt-5 gy-5 w-100 d-flex justify-content-evenly' 
+
     for (let j = 0; j < cols; j++) {
       const col = document.createElement('div')
-      col.className = 'col-8 col-sm-5 col-lg-3 col-xl-3 col-xxl-2'
+      col.className = 'col-8 col-sm-5 col-lg-3 col-xl-3 col-xxl-2 col-animate'
       let product = undefined
+
       while (!product) {
         if (products[0].index >= polos.length && products[1].index >= shirts.length && products[2].index >= t_shirts.length)
           break
@@ -329,15 +346,17 @@ function fillProductsPage(){
         curr_catagory.index += 1
         products_idx = (products_idx + 1) % products.length
       }
-      if (!product)
-        break
+
+      if (!product) break
       col.innerHTML = makeCard(product.url , product.name , product.old_price , product.new_price)
       row.appendChild(col)
     }
-    console.log(2 ,row)
+
     collection_container.appendChild(row)
+    rowObserver.observe(row)
   }
 }
+
 function fillBlogsPage(){
   index = 0
   for (let i = 0; i < blogRows ; i++) {
@@ -357,9 +376,8 @@ function fillBlogsPage(){
     blogsContainer.appendChild(row)
   }
 }
-console.log(window.location.pathname.includes('home.html'))
 if (window.location.pathname.includes('home.html')){
-  staggerAppear(heroContent, 2000, 800);
+  staggerAppear(heroContent, 1000, 800);
   fillSwiper()
 }
 if (window.location.pathname.includes('products.html')){

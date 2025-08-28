@@ -36,6 +36,7 @@ img{
 }
 .btn{
     transition: all 0.5 ease;
+    will-change: all;
     align-items: center;
 }
 
@@ -46,7 +47,7 @@ a{
     text-decoration: none;
 }
 .hidden{
-    display: none;
+    display: none !important;
 }
 .bg-blur{
     backdrop-filter: blur(20px) !important;
@@ -55,12 +56,20 @@ a{
 .rounded{
     border-radius: 30px;
 }
+.fw-extra-bold {
+    font-weight: 900 !important;
+  }
+  .text-bordered {
+    color: white; /* text fill */
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.5); /* border thickness and color */
+  }
+  
 /* ====================================================key frames===================================================== */
-@keyframes change {
-    0%   {background-image: url(../assets/images/bgs/bg1.jpg)}
-    33%  {background-image: url(../assets/images/bgs/bg2.jpg); }
-    66%  {background-image: url(../assets/images/bgs/bg3.jpg);}
-    100% {background-image: url(../assets/images/bgs/bg1.jpg);}
+@keyframes changeBg {
+    0%   {background-image: url(../assets/images/bgs/bg4.jpg);}
+    33%  {background-image: url(../assets/images/bgs/bg5.jpg);}
+    66%  {background-image: url(../assets/images/bgs/bg6.jpg);}
+    100% {background-image: url(../assets/images/bgs/bg4.jpg);}
 }
 @keyframes fadeIn {
     0%   {opacity: 0;}
@@ -84,7 +93,7 @@ a{
     width: 100%;
     min-height: 86dvh;
     overflow: hidden;
-    animation: change 12s infinite;
+    animation: changeBg 18s infinite;
     background-size: cover;
     background-position: center;
     background-color: rgba(0, 0, 0, 0.6);
@@ -113,6 +122,7 @@ a{
     opacity: 0;
     transition: opacity 1s ease , transform 1s ease;
     transform: translateY(-30px);
+    will-change: opacity , transform;
 } 
 .text-huge{font-size: calc(30px + 3vw);}
 
@@ -120,9 +130,13 @@ a{
 .card{
     overflow: hidden;
 }
+.card-overlay{
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
 .card-img{
     transform: scale(1);
     transition: transform 0.6s ease;
+    will-change:transform ;
 }
 .offers .card-img:hover{
     transform: scale(1.07);
@@ -205,6 +219,7 @@ footer svg{
     transform: translateY(25%);
     opacity: 0;
     transition:all 0.5s ease;
+    will-change: all;
 }
 .bg-orange-overlay:hover{
     background-color: orangered;
@@ -223,6 +238,7 @@ footer svg{
 .products-hero-content > *{
     opacity: 0;
     transition: opacity 1s ease , transform 1s ease;
+    will-change: opacity , transform;
 } 
 .products-hero-content > h1:first-child{
     transform: translateY(-40px);
@@ -245,17 +261,16 @@ footer svg{
     animation: autoshow_animation both ease-in-out;
     animation-timeline: view(60%  20%);
 }
-.embed-cover { position: relative; overflow: hidden; }
 
-/* Force iframe to cover container: fill height & be at least as wide as container */
-.embed-cover iframe,
-.embed-cover video {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  height: 100%;      /* fill height */
-  min-width: 100%;   /* ensure width at least container width so no thin column */
-  transform: translate(-50%, -50%); /* center */
-  border: 0;
-  display: block;
+.col-animate{
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 400ms ease, transform 400ms ease;
+    will-change: opacity, transform;
 }
+  
+.col-animate.appear{
+    opacity: 1;
+    transform: none;
+}
+  
