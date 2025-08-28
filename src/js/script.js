@@ -36,6 +36,23 @@ fetch("../components/header.html").then(response => response.text()).then(data =
       if (link.getAttribute('href') === path)
         link.classList.add('active')
     })
+    try{
+      currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    }catch{
+      currentUser = null
+    }
+    console.log(currentUser)
+    if(currentUser){
+      document.getElementById('loginBtn').classList.add('hidden')
+      document.getElementById('signUpBtn').classList.add('hidden')
+      document.getElementById('logOutBtn').classList.remove('hidden')
+    }
+    else{
+      document.getElementById('loginBtn').classList.remove('hidden')
+      document.getElementById('signUpBtn').classList.remove('hidden')
+      document.getElementById('logOutBtn').classList.add('hidden')      
+    }
+    document.getElementById('logOutBtn').addEventListener('click' , logOut)
   })
   .catch(error => console.error("Error loading header:", error));
 
@@ -219,7 +236,6 @@ const rowObserver = new IntersectionObserver((entries, obs) => {
     obs.unobserve(entry.target); // run once per row
   });
 }, { threshold: 0.15 });
-
 const base_collections_url = '../assets/images/collection/'
 const rows = Math.ceil((shirts.length + t_shirts.length + polos.length) / 4), cols = 4
 const heroContent = document.querySelectorAll('.hero-content > *');
@@ -230,7 +246,6 @@ const swiperCardsNUmber = 6
 const blogsContainer = document.getElementById('blogs-section')
 const blogRows = Math.ceil(blogs.length / 2)
 // functions
-
 function staggerAppear(elements, baseDelay, stepDelay) {
   elements.forEach((el, idx) => {
     setTimeout(() => {
@@ -318,7 +333,6 @@ function fillSwiper(){
       curr_catagory.index += 1
       products_idx = (products_idx + 1) % products.length
     }
-    console.log(i , product)
     if (!product)
       break
     swiperCard.innerHTML = makeSwiperCard(product.url , product.name , product.old_price , product.new_price) 
@@ -356,7 +370,6 @@ function fillProductsPage(){
     rowObserver.observe(row)
   }
 }
-
 function fillBlogsPage(){
   index = 0
   for (let i = 0; i < blogRows ; i++) {
@@ -376,6 +389,12 @@ function fillBlogsPage(){
     blogsContainer.appendChild(row)
   }
 }
+function logOut () {
+  localStorage.removeItem('currentUser')
+  location.reload()
+  // console.log(1)
+}
+
 if (window.location.pathname.includes('home.html')){
   staggerAppear(heroContent, 1000, 800);
   fillSwiper()
@@ -387,6 +406,7 @@ if (window.location.pathname.includes('products.html')){
 if (window.location.pathname.includes('blog.html')){
   fillBlogsPage()
 }
+
 
 
 

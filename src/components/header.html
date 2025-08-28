@@ -4,11 +4,9 @@
       <a href="home.html" class="navbar-brand text-white fw-bold fs-3">ODOR</a>
   
       <div class="d-flex align-items-center gap-2">
-        <a href="../pages/login.html" class="btn btn-outline-light me-2">Login</a>
-        <a href="../pages/signup.html" class="btn bg-orange text-light me-2">Sign Up</a>
-  
-        <!-- Cart Toggle -->
-        
+        <a id="loginBtn" href="../pages/login.html" class="btn btn-outline-light me-2">Login</a>
+        <a id="signUpBtn" href="../pages/signup.html" class="btn bg-orange text-light me-2">Sign Up</a>
+        <button id="logOutBtn" class="hidden btn bg-danger text-light">Log out</button>       
       </div>
     </div>
   </div>
@@ -46,7 +44,7 @@
 
   </nav>
   
-  <!-- Offcanvas Cart (slides from right) -->
+  
   <div class="offcanvas offcanvas-end cart-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
     <div class="offcanvas-header">
       <h5 class="offcanvas-title text-white" id="cartOffcanvasLabel">Your Cart</h5>
@@ -54,12 +52,11 @@
     </div>
   
     <div class="offcanvas-body p-0 d-flex flex-column">
-      <!-- Cart items scroll area -->
+      
       <div id="cartItemsWrap" class="flex-grow-1 overflow-auto p-3">
         <ul id="cartItemsList" class="list-group list-group-flush"></ul>
-      </div>
-  
-      <!-- Cart footer (summary + checkout) -->
+      </div>  
+     
       <div class="cart-footer p-3 border-top">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="small text-muted">Subtotal</div>
