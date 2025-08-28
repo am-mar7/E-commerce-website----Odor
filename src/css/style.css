@@ -29,7 +29,7 @@ img{
     object-fit: cover;
 }
 .text-orange{
-    color: orangered;
+    color: orangered !important;
 }
 .bg-orange{
     background-color: orangered !important;
