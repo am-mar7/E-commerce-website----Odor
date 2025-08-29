@@ -272,6 +272,15 @@ const base_collections_url = '../assets/images/collection/'
 
 // functions
 function checkout () { 
+  if(!currentUser){
+    Swal.fire({
+      icon: "error",
+      title: "checkout faild",
+      text: "You must have account first",
+      footer: '<a href="../pages/signup.html">Go create accout</a>'
+    });
+    return
+  }
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
       confirmButton: "btn btn-primary ",
@@ -287,7 +296,7 @@ function checkout () {
     icon: "question",
     showCancelButton: true,
     confirmButtonText: "Yes, checkout",
-    cancelButtonText: "No, continue shopping",
+    cancelButtonText: "not now",
     reverseButtons: true
   }).then((result) => {
     if (result.isConfirmed) {

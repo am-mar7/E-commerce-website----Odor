@@ -58,7 +58,6 @@ if(window.location.pathname.includes('signup.html')){
         confirmButtonText: "OK",
       }).then((result) => {
         if (result.isConfirmed) {
-          localStorage.removeItem('cartItems')
           window.location.href = '../pages/home.html';
         }
       });
@@ -82,7 +81,6 @@ if (window.location.pathname.includes('login.html')) {
           confirmButtonText: "OK",
         }).then((result) => {
           if (result.isConfirmed) {
-            localStorage.removeItem('cartItems')
             window.location.href = '../pages/home.html';
           }
         });
