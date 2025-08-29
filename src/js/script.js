@@ -574,7 +574,7 @@ function makeCard(productUrl , productName , productOld_price , productNew_price
   </div>
   `
 }
-function makeBlogCard(title , url , content){
+function makeBlogCard(title, url, content){
   return `
   <article class="card h-100 shadow-sm">
         <div class="ratio ratio-16x9 position-relative embed-cover">
@@ -592,8 +592,9 @@ function makeBlogCard(title , url , content){
           <p class="card-text text-muted mb-0">${content}</p>           
         </div>
       </article>
-  `
+  `;
 }
+
 function makeSwiperCard(productUrl , productName , productOld_price , productNew_price , product_id){
   return`
   <div data-id="${product_id}" class="card m-0">
