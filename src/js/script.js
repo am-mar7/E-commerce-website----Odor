@@ -50,8 +50,13 @@ fetch("../components/header.html").then(response => response.text()).then(data =
     }
     document.getElementById('logOutBtn').addEventListener('click' , logOut)
     fillCartwithItems()
-    const cartList = document.getElementById('cartItemsList')
+    const cartList = document.getElementById('cartItemsList') , checkoutBtn = document.getElementById('checkoutBtn')
+    , clearCartBtn = document.getElementById('clearCartBtn') , cartSubtotal = document.getElementById('cartSubtotal') 
     cartList.addEventListener("click", removeItemFromCart);
+    clearCartBtn.addEventListener('click' , clearAllCart)
+    checkoutBtn.addEventListener('click' , checkout)
+    total = cartItems.reduce((sum, { new_price }) => sum + new_price, 0);
+    cartSubtotal.textContent = total
 })
   .catch(error => console.error("Error loading header:", error));
 
@@ -263,16 +268,134 @@ const base_collections_url = '../assets/images/collection/'
 , swiperCardsNUmber = 6
 , blogsContainer = document.getElementById('blogs-section')
 , blogRows = Math.ceil(blogs.length / 2)
+, CartElemnets = []
 
 // functions
+function checkout () { 
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-primary ",
+      cancelButton: "btn btn-secondary me-5"
+    },
+    buttonsStyling: false
+  });
+  
+  // Checkout confirmation
+  swalWithBootstrapButtons.fire({
+    title: "Confirm Checkout?",
+    text: "Do you want to place your order now?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Yes, checkout",
+    cancelButtonText: "No, continue shopping",
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Success notification
+      swalWithBootstrapButtons.fire({
+        title: "Order Placed!",
+        text: "Your order has been successfully placed.",
+        icon: "success"
+      });
+  
+      // TODO: perform actual checkout logic here
+      // e.g., clear cartItems, update localStorage, call API
+      cartItems = [];
+      updateCartItems(cartItems);
+  
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      // Cancel notification
+      swalWithBootstrapButtons.fire({
+        title: "Checkout Cancelled",
+        text: "You can continue shopping.",
+        icon: "info"
+      });
+    }
+  });
+  
+ }
+function clearAllCart(){
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger me-5"
+    },
+    buttonsStyling: false
+  });
+  swalWithBootstrapButtons.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "No, cancel!",
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      swalWithBootstrapButtons.fire({
+        title: "Deleted!",
+        text: "Your file has been deleted.",
+        icon: "success"
+      });
+      CartElemnets.forEach((cart)=>{
+        cart.remove()
+      })
+      updateCartItems([]);
+      const cartSubtotal = document.getElementById('cartSubtotal')
+      cartSubtotal.textContent = '0'
+    } else if (
+      result.dismiss === Swal.DismissReason.cancel
+    ) {
+      swalWithBootstrapButtons.fire({
+        title: "Cancelled",
+        text: "Your imaginary file is safe :)",
+        icon: "error"
+      });
+    }
+  });
+}
 function removeItemFromCart(e) {
   if (e.target.classList.contains("remove-from-cart")) {
-    const item = e.target.closest(".cart-card")        
-    item.remove()
-    const name = item.querySelector("h6").textContent
-    console.log(name)
-    cartItems = cartItems.filter(p => p.name !== name)
-    updateCartItems(cartItems);
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger me-5"
+      },
+      buttonsStyling: false
+    });
+    swalWithBootstrapButtons.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        swalWithBootstrapButtons.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+        const item = e.target.closest(".cart-card")        
+        const name = item.querySelector("h6").textContent        
+        const removedCash = cartItems.find( p => p.name === name).new_price
+        const subtotalEl = document.getElementById('cartSubtotal')
+        subtotalEl.textContent = (parseFloat(subtotalEl.textContent) - removedCash).toFixed(2)
+        cartItems = cartItems.filter(p => p.name !== name)
+        item.remove()    
+        updateCartItems(cartItems);  
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire({
+          title: "Cancelled",
+          text: "Your imaginary file is safe :)",
+          icon: "error"
+        });
+      }
+    });
   }
 }
 function fillCartwithItems(){
@@ -289,6 +412,7 @@ function fillCartwithItems(){
     <button class="remove-from-cart btn btn-danger fs-small btn-sm">remove</button>
   `
   cartList.appendChild(cartCard)  
+  CartElemnets.push(cartCard)
   })
 }
 function LoadCartItems (){
@@ -483,6 +607,7 @@ function addInCart(event){
       product.size = result.value
       const cartCard = document.createElement('div')
       cartCard.className = 'cart-card w-100'
+      cartCard.id = product.id
       cartCard.innerHTML = `
         <img src="${base_collections_url}${product.url}" class="cart-img" alt="${product.name}">
         <div class="cart-info">
@@ -493,8 +618,11 @@ function addInCart(event){
         <button class="remove-from-cart btn btn-danger fs-small btn-sm">remove</button>
       `
       cartList.appendChild(cartCard)
+      CartElemnets.push(cartCard)
       cartItems.push(product)
       updateCartItems(cartItems)
+      const subtotalEl = document.getElementById('cartSubtotal')
+      subtotalEl.textContent = (parseFloat(subtotalEl.textContent) +product.new_price).toFixed(2);
     }
   });
 }
