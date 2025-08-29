@@ -172,14 +172,6 @@ footer svg{
   .form-control::placeholder {
     color: orangered;
   }
-  .btn-warning {
-    background-color: orangered ;
-    border-color: orangered;
-  }
-  .btn-warning:hover {
-    background-color: rgba(255, 68, 0, 0.79);
-    border-color: orangered;
-  }
   .swiper-slide {
     aspect-ratio: 7/9;   
     overflow: hidden;

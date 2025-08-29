@@ -364,49 +364,158 @@ function clearAllCart(){
   });
 }
 function removeItemFromCart(e) {
-  if (e.target.classList.contains("remove-from-cart")) {
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger me-5"
-      },
-      buttonsStyling: false
-    });
-    swalWithBootstrapButtons.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "No, cancel!",
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-        swalWithBootstrapButtons.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success"
-        });
-        const item = e.target.closest(".cart-card")        
-        const name = item.querySelector("h6").textContent        
-        const removedCash = cartItems.find( p => p.name === name).new_price
-        const subtotalEl = document.getElementById('cartSubtotal')
-        subtotalEl.textContent = (parseFloat(subtotalEl.textContent) - removedCash).toFixed(2)
-        cartItems = cartItems.filter(p => p.name !== name)
-        item.remove()    
-        updateCartItems(cartItems);  
-      } else if (
-        result.dismiss === Swal.DismissReason.cancel
-      ) {
-        swalWithBootstrapButtons.fire({
-          title: "Cancelled",
-          text: "Your imaginary file is safe :)",
-          icon: "error"
-        });
-      }
+  if (!e.target.classList.contains("remove-from-cart")) return;
+
+  const itemCard = e.target.closest(".cart-card");
+  if (!itemCard) return;
+
+  // read identifying attributes
+  const cardId = itemCard.getAttribute("data-id") || itemCard.id || null;
+  const cardColor = (itemCard.getAttribute("data-color") || "").toString();
+  const cardSize = (itemCard.getAttribute("data-size") || "").toString();
+
+  // find the matching cart item index
+  let idx = cartItems.findIndex(it => {
+    const itColor = (it.color || "").toString();
+    const itSize = (it.size || "").toString();
+    return String(it.id) === String(cardId) &&
+           itColor.toLowerCase() === cardColor.toLowerCase() &&
+           itSize.toLowerCase() === cardSize.toLowerCase();
+  });
+
+  // fallback: try matching by data-key (if present)
+  if (idx === -1) {
+    const cardKey = itemCard.getAttribute("data-key") || `${cardId}__${cardColor}__${cardSize}`;
+    idx = cartItems.findIndex(it => {
+      const itKey = `${it.id}__${String(it.color || "").toLowerCase()}__${String(it.size || "").toLowerCase()}`;
+      return itKey === cardKey;
     });
   }
+
+  // final fallback: match by product name (legacy)
+  if (idx === -1) {
+    const name = itemCard.querySelector("h6") ? itemCard.querySelector("h6").textContent.trim() : null;
+    if (name) idx = cartItems.findIndex(it => it.name === name);
+  }
+
+  if (idx === -1) {
+    Swal.fire({ title: "Item not found", text: "This item wasn't found in the cart data.", icon: "error" });
+    return;
+  }
+
+  const cartItem = cartItems[idx];
+  const amount = Number(cartItem.amount || 1);
+  const price = Number(cartItem.new_price || cartItem.price || 0);
+
+  // helper to recompute subtotal from cartItems (safer)
+  function recomputeSubtotal() {
+    const subtotalEl = document.getElementById('cartSubtotal');
+    const total = cartItems.reduce((sum, it) => {
+      const p = Number(it.new_price || it.price || 0);
+      const a = Number(it.amount || 1);
+      return sum + p * a;
+    }, 0);
+    subtotalEl.textContent = total.toFixed(2);
+  }
+
+  // Prepare sweetalert mixin with bootstrap classes
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-warning mx-2", // Remove one
+      denyButton: "btn btn-danger mx-2",     // Remove all
+      cancelButton: "btn btn-secondary mx-2"
+    },
+    buttonsStyling: false
+  });
+
+  // Build dialog html (preview)
+  const html = `
+    <div style="display:flex;gap:12px;align-items:center;">
+      <img src="${base_collections_url}${cartItem.url || ''}" alt="${cartItem.name || ''}"
+           style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+      <div style="font-size:14px;">
+        <strong style="display:block;margin-bottom:6px">${cartItem.name || ''}</strong>
+        <div style="color:#666;font-size:13px;margin-bottom:6px;">
+          Color: <span style="text-transform:capitalize">${cartItem.color || '-'}</span>
+          &nbsp;•&nbsp;
+          Size: <span style="text-transform:uppercase">${cartItem.size || '-'}</span>
+        </div>
+        <div style="font-size:13px;color:#333;">
+          Price: <strong>${(price).toFixed(2)} EGP</strong>
+          &nbsp;•&nbsp;
+          Quantity: <strong>${amount}</strong>
+        </div>
+      </div>
+    </div>
+    <style>
+      /* small extra spacing for the swal content */
+      .swal2-html-container { text-align: left; padding-top: 8px; }
+    </style>
+  `;
+
+  // If amount > 1 we show "Remove one" (confirm) + "Remove all" (deny) + Cancel.
+  // If amount === 1 we show "Remove" (confirm) + Cancel only (no deny/remove-all).
+  const swalOptions = {
+    title: amount > 1 ? "Remove item?" : "Remove item?",
+    html,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: amount > 1 ? "Remove one" : "Remove",
+    cancelButtonText: "Cancel",
+    reverseButtons: true
+  };
+
+  if (amount > 1) {
+    swalOptions.showDenyButton = true;
+    swalOptions.denyButtonText = "Remove all";
+  }
+
+  swalWithBootstrapButtons.fire(swalOptions).then(result => {
+    if (result.isConfirmed) {
+      // remove one unit
+      cartItems[idx].amount = Math.max(0, Number(cartItems[idx].amount || 1) - 1);
+
+      // update DOM amount display (if exists)
+      const amountEl = itemCard.querySelector('.cart-amount');
+      if (amountEl) {
+        amountEl.textContent = cartItems[idx].amount;
+      } else {
+        // fallback: update any paragraph containing "Amount:"
+        const pList = itemCard.querySelectorAll('.cart-info p');
+        pList.forEach(p => {
+          if (/Amount:/i.test(p.textContent)) p.textContent = `Amount: ${cartItems[idx].amount}`;
+        });
+      }
+
+      // if quantity becomes 0 -> remove completely
+      if (cartItems[idx].amount === 0) {
+        cartItems.splice(idx, 1);
+        itemCard.remove();
+      }
+
+      recomputeSubtotal();
+      updateCartItems(cartItems);
+
+      swalWithBootstrapButtons.fire({ title: "Updated", text: "One unit removed from cart.", icon: "success" });
+
+    } else if (result.isDenied) {
+      // Remove all units of this item
+      cartItems.splice(idx, 1);
+      itemCard.remove();
+
+      recomputeSubtotal();
+      updateCartItems(cartItems);
+
+      swalWithBootstrapButtons.fire({ title: "Deleted!", text: "All units of this item have been removed.", icon: "success" });
+
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      // Cancelled - do nothing
+      swalWithBootstrapButtons.fire({ title: "Cancelled", text: "Your item is safe.", icon: "info" });
+    }
+  });
 }
+
+
 function fillCartwithItems(){
   cartItems.forEach((product) =>{
   const cartCard = document.createElement('div'), cartList = document.getElementById('cartItemsList')
@@ -582,59 +691,255 @@ function logOut () {
   localStorage.removeItem('cartItems')
   location.reload()
 }
-function addInCart(event){
-  const btn = event.target , card =  btn.closest('.card') 
-  , cartList = document.getElementById('cartItemsList'), id = card.getAttribute('data-id') 
-  , allProducts = [...shirts , ...t_shirts , ...polos], product = allProducts.find(p => p.id === id)
-  if (!currentUser){
+function addInCart(event) {
+  const btn = event.target;
+  const card = btn.closest('.card');
+  const cartList = document.getElementById('cartItemsList');
+  const id = card.getAttribute('data-id');
+  const allProducts = [...shirts, ...t_shirts, ...polos];
+  const product = allProducts.find(p => p.id === id);
+
+  // Require login
+  if (!currentUser) {
     Swal.fire({
       icon: "error",
       title: "Oops...",
       text: "You must be login first",
       footer: '<a href="../pages/login.html">Go Login</a>',
-      showConfirmButton: false,   
-      allowOutsideClick: true, 
-      allowEscapeKey: true   
-    })
+      showConfirmButton: false,
+      allowOutsideClick: true,
+      allowEscapeKey: true
+    });
+    return; // stop here
   }
+
+  // Show modal
   Swal.fire({
-    title: "Choose Size",
-    input: "select",
-    inputOptions: {
-      Xsmall: "XS",
-      small: "S",
-      medium: "M",
-      large: "L",
-      Xlarge: "XL"
-    },
-    inputPlaceholder: "Select a size",
+    title: "Choose product details",
+    html: `
+      <div class="swal-product">
+        <img id="swal-product-img" src="${base_collections_url}${product.url}" alt="${product.name}" />
+        <div class="swal-product-info">
+          <strong id="swal-product-name">${product.name}</strong>
+          <div id="swal-product-price">${Number(product.new_price).toFixed(2)} EGP</div>
+        </div>
+      </div>
+
+      <div class="swal-row">
+        <label class="swal-label">Color</label>
+        <div id="colorOptions" class="color-options">
+          <label class="color-swatch" title="Green">
+            <input type="radio" name="color" value="green" />
+            <span class="swatch-circle" style="background:green"></span>
+            <span class="swatch-name">Green</span>
+          </label>
+          <label class="color-swatch" title="Black">
+            <input type="radio" name="color" value="black" />
+            <span class="swatch-circle" style="background:black"></span>
+            <span class="swatch-name">Black</span>
+          </label>
+          <label class="color-swatch" title="Blue">
+            <input type="radio" name="color" value="blue" />
+            <span class="swatch-circle" style="background:blue"></span>
+            <span class="swatch-name">Blue</span>
+          </label>
+          <label class="color-swatch" title="White">
+            <input type="radio" name="color" value="white" />
+            <span class="swatch-circle" style="background:white; border:1px solid #ccc"></span>
+            <span class="swatch-name">White</span>
+          </label>
+          <label class="color-swatch" title="Purple">
+            <input type="radio" name="color" value="purple" />
+            <span class="swatch-circle" style="background:purple"></span>
+            <span class="swatch-name">Purple</span>
+          </label>
+          <label class="color-swatch" title="Gray">
+            <input type="radio" name="color" value="gray" />
+            <span class="swatch-circle" style="background:gray"></span>
+            <span class="swatch-name">Gray</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="swal-row">
+        <label class="swal-label">Amount</label>
+        <input id="amountInput" type="number" class="swal2-input" min="1" value="1" />
+      </div>
+
+      <div class="swal-row">
+        <label class="swal-label">Size</label>
+        <select id="sizeSelect" class="swal2-input">
+          <option value="Xsmall">XS</option>
+          <option value="small">S</option>
+          <option value="medium" selected>M</option>
+          <option value="large">L</option>
+          <option value="Xlarge">XL</option>
+        </select>
+      </div>
+
+      <div class="swal-row preview-total">
+        <strong>Preview total:</strong>
+        <span id="previewTotal">${Number(product.new_price).toFixed(2)} EGP</span>
+      </div>
+
+      <style>
+        .swal-product { display:flex; gap:12px; align-items:center; margin-bottom:10px; }
+        #swal-product-img { width:64px; height:64px; object-fit:cover; border-radius:6px; }
+        .swal-product-info { font-size:13px; }
+        .swal-product-info strong { display:block; margin-bottom:4px; }
+        .swal-row { margin:8px 0; }
+        .swal-label { display:block; font-size:13px; margin-bottom:6px; color:#444; }
+        .color-options { display:flex; gap:8px; flex-wrap:wrap; }
+        .color-swatch { cursor:pointer; display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:8px; border:1px solid transparent; transition: all .15s; user-select:none; }
+        .color-swatch input { display:none; }
+        .swatch-circle { width:20px; height:20px; border-radius:50%; display:inline-block; box-shadow: 0 0 0 2px rgba(0,0,0,0.04) inset; }
+        .swatch-name { font-size:12px; text-transform:capitalize; color:#222; }
+        .color-swatch.selected { border-color:#007bff; background: rgba(0,123,255,0.06); }
+        .preview-total { margin-top:12px; font-size:14px; }
+        .swal2-input, #sizeSelect { box-sizing:border-box; width:100%; margin:0; }
+      </style>
+    `,
+    focusConfirm: false,
     showCancelButton: true,
-    confirmButtonText: "OK",
+    confirmButtonText: "Add to cart",
+    didOpen: () => {
+      // default color = black
+      const defaultColor = document.querySelector('input[name="color"][value="black"]');
+      if (defaultColor) {
+        defaultColor.checked = true;
+        defaultColor.closest('.color-swatch').classList.add('selected');
+      }
+
+      const amountInput = document.getElementById('amountInput');
+      const previewTotal = document.getElementById('previewTotal');
+      const price = Number(product.new_price) || 0;
+
+      function updatePreview() {
+        const amt = Math.max(1, parseInt(amountInput.value, 10) || 1);
+        previewTotal.textContent = (price * amt).toFixed(2) + ' EGP';
+      }
+
+      document.getElementById('colorOptions').querySelectorAll('.color-swatch').forEach(label => {
+        label.addEventListener('click', () => {
+          const input = label.querySelector('input[type="radio"]');
+          if (input) input.checked = true;
+          document.querySelectorAll('.color-swatch').forEach(l => l.classList.remove('selected'));
+          label.classList.add('selected');
+        });
+      });
+
+      amountInput.addEventListener('input', updatePreview);
+      updatePreview();
+    },
+    preConfirm: () => {
+      const checkedColor = document.querySelector('input[name="color"]:checked');
+      const color = checkedColor ? checkedColor.value : null;
+      const amount = Math.max(1, parseInt(document.getElementById('amountInput').value, 10) || 1);
+      const size = document.getElementById('sizeSelect').value;
+
+      if (!color) {
+        Swal.showValidationMessage("Please pick a color.");
+        return false;
+      }
+      if (!size) {
+        Swal.showValidationMessage("Please pick a size.");
+        return false;
+      }
+
+      return { color, amount, size };
+    }
   }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire(`You chose ${product.name} with size: ${result.value}`);
-      product.size = result.value
-      const cartCard = document.createElement('div')
-      cartCard.className = 'cart-card w-100'
-      cartCard.id = product.id
+    if (!result.isConfirmed) return;
+
+    const { color, amount, size } = result.value;
+    const price = Number(product.new_price) || 0;
+
+    // make a cart item object (clone so original product not mutated)
+    const productForCart = Object.assign({}, product, {
+      color,
+      amount: Number(amount),
+      size
+    });
+
+    // create a unique key for matching: id|color|size (use lowercase color/size to normalize)
+    const key = `${productForCart.id}__${String(productForCart.color).toLowerCase()}__${String(productForCart.size).toLowerCase()}`;
+
+    // try to find existing item in cartItems with same key
+    let existingIndex = -1;
+    for (let i = 0; i < cartItems.length; i++) {
+      const it = cartItems[i];
+      const itKey = `${it.id}__${String(it.color || '').toLowerCase()}__${String(it.size || '').toLowerCase()}`;
+      if (itKey === key) {
+        existingIndex = i;
+        break;
+      }
+    }
+
+    const subtotalEl = document.getElementById('cartSubtotal');
+    const prevSubtotal = parseFloat(subtotalEl.textContent) || 0;
+    const addedAmountValue = (price * Number(productForCart.amount || 1));
+
+    if (existingIndex !== -1) {
+      // update existing item quantity
+      cartItems[existingIndex].amount = Number(cartItems[existingIndex].amount || 0) + Number(productForCart.amount);
+
+      // update DOM card: find matching card by data-key attribute
+      const dataKey = key;
+      const existingCard = cartList.querySelector(`.cart-card[data-key="${dataKey}"]`);
+      if (existingCard) {
+        // update amount text inside the card (assumes there is an element with class .cart-amount)
+        const amountEl = existingCard.querySelector('.cart-amount');
+        if (amountEl) {
+          amountEl.textContent = cartItems[existingIndex].amount;
+        } else {
+          // fallback: try to replace the "Amount: X" paragraph
+          const pList = existingCard.querySelectorAll('.cart-info p');
+          pList.forEach(p => {
+            if (/Amount:/i.test(p.textContent)) {
+              p.textContent = `Amount: ${cartItems[existingIndex].amount}`;
+            }
+          });
+        }
+      }
+
+      // update subtotal by adding only the newly added items' total
+      subtotalEl.textContent = (prevSubtotal + addedAmountValue).toFixed(2);
+
+      // persist
+      updateCartItems(cartItems);
+    } else {
+      // create new cart card with data-key attribute
+      const cartCard = document.createElement('div');
+      cartCard.className = 'cart-card w-100';
+      // set attributes for later easy lookup
+      cartCard.id = productForCart.id;
+      cartCard.setAttribute('data-key', key);
+      cartCard.setAttribute('data-id', productForCart.id);
+      cartCard.setAttribute('data-color', productForCart.color);
+      cartCard.setAttribute('data-size', productForCart.size);
+
       cartCard.innerHTML = `
-        <img src="${base_collections_url}${product.url}" class="cart-img" alt="${product.name}">
+        <img src="${base_collections_url}${productForCart.url}" class="cart-img" alt="${productForCart.name}">
         <div class="cart-info">
-          <h6>${product.name}</h6>
-          <p>${product.new_price} EGP</p>
-          <p>Size: ${product.size}</p>
+          <h6>${productForCart.name}</h6>
+          <p>${Number(productForCart.new_price).toFixed(2)} EGP</p>
+          <p>Color: <span class="color-dot" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${productForCart.color};margin-right:6px;vertical-align:middle;border:1px solid rgba(0,0,0,0.12)"></span>${productForCart.color}</p>
+          <p>Amount: <span class="cart-amount">${productForCart.amount}</span></p>
+          <p>Size: ${productForCart.size}</p>
         </div>
         <button class="remove-from-cart btn btn-danger fs-small btn-sm">remove</button>
-      `
-      cartList.appendChild(cartCard)
-      CartElemnets.push(cartCard)
-      cartItems.push(product)
-      updateCartItems(cartItems)
-      const subtotalEl = document.getElementById('cartSubtotal')
-      subtotalEl.textContent = (parseFloat(subtotalEl.textContent) +product.new_price).toFixed(2);
+      `;
+      cartList.appendChild(cartCard);
+      CartElemnets.push(cartCard);
+
+      // push to cartItems and persist
+      cartItems.push(productForCart);
+      updateCartItems(cartItems);
+      subtotalEl.textContent = (prevSubtotal + addedAmountValue).toFixed(2);
     }
   });
 }
+
 
 
 if (window.location.pathname.includes('home.html')){
