@@ -1,11 +1,10 @@
 // Fetching header and footer 
+let currentUser = null , cartItems = LoadCartItems() 
 fetch("../components/header.html").then(response => response.text()).then(data => {
     document.querySelector(".fetch-header").innerHTML = data
 
-    // any js code  related to header will be written here 
-    const navParts = document.querySelectorAll('.navpart')
-    const navtext = document.querySelectorAll('.nav-item > *')
-    const navbar = document.querySelector('.navbar-expand-md')
+    const navParts = document.querySelectorAll('.navpart'),navtext = document.querySelectorAll('.nav-item > *')
+    , navbar = document.querySelector('.navbar-expand-md')
     window.addEventListener('scroll', () => {
       if (window.scrollY > 80) {
         navParts[0].classList.add('hidden')
@@ -28,20 +27,17 @@ fetch("../components/header.html").then(response => response.text()).then(data =
         navParts[1].classList.add('border-bottom')
       }
     })
-
+    
     const links = document.querySelectorAll('.nav-link')
     path = window.location.pathname.split('/').pop()
     links.forEach((link) => {
       link.classList.remove('active')
       if (link.getAttribute('href') === path)
         link.classList.add('active')
-    })
+    })    
     try{
       currentUser = JSON.parse(localStorage.getItem('currentUser'))
-    }catch{
-      currentUser = null
-    }
-    console.log(currentUser)
+    }catch{}
     if(currentUser){
       document.getElementById('loginBtn').classList.add('hidden')
       document.getElementById('signUpBtn').classList.add('hidden')
@@ -53,7 +49,10 @@ fetch("../components/header.html").then(response => response.text()).then(data =
       document.getElementById('logOutBtn').classList.add('hidden')      
     }
     document.getElementById('logOutBtn').addEventListener('click' , logOut)
-  })
+    fillCartwithItems()
+    const cartList = document.getElementById('cartItemsList')
+    cartList.addEventListener("click", removeItemFromCart);
+})
   .catch(error => console.error("Error loading header:", error));
 
 fetch("../components/footer.html").then(response => response.text()).then(data => {
@@ -63,30 +62,35 @@ fetch("../components/footer.html").then(response => response.text()).then(data =
 
 const shirts = [
   {
+    id:'1',
     name: 'Casual Pleated Shirt',
     old_price: 1100.00,
     new_price: 599.00,
     url: 'shirts/Casual Pleated Short Sleeve Shirt.webp'
   },
   {
+    id:'2',
     name: 'Casual Waffle Shirt',
     old_price: 1400.00,
     new_price: 850.00,
     url: 'shirts/Casual Waffle Short Sleeve Shirt.webp'
   },
   {
+    id : '3',
     name: 'Cotton Henley Shirt',
     old_price: 1100.00,
     new_price: 650.00,
     url: 'shirts/Cotton Short Sleeve Henley Shirt.webp'
   },
   {
+    id: '4',
     name: 'Short Sleeve Henley Shirt',
     old_price: 900.00,
     new_price: 490.00,
     url: 'shirts/Short Sleeve Henley Shirt.webp'
   },
   {
+    id : '5',
     name: 'cotton shirt',
     old_price: 900.00,
     new_price: 499.00,
@@ -95,24 +99,28 @@ const shirts = [
 ]
 const t_shirts = [
   {
+    id:`${shirts.length+1}`,
     name: 'basic t-shirt',
     old_price: 700.00,
     new_price: 250.00,
     url: 't-shirts/basic t-shirt.jpg'
   },
   {
+    id:`${shirts.length+2}`,
     name: 'long-sleeve black t-shirt',
     old_price: 999.99,
     new_price: 599.00,
     url: 't-shirts/long-sleeve black t-shirt.jpg'
   },
   {
+    id:`${shirts.length+3}`,
     name: 'over-size t-shirt',
     old_price: 1200.00,
     new_price: 750.00,
     url: 't-shirts/over-size t-shirt.jpg'
   },
   {
+    id:`${shirts.length+4}`,
     name: 'smart casual t-shirt',
     old_price: 1500.00,
     new_price: 799.00,
@@ -121,54 +129,63 @@ const t_shirts = [
 ]
 const polos = [
   {
+    id:`${shirts.length+1+t_shirts.length}`,
     name: 'basic polo',
     old_price: 900.00,
     new_price: 499.00,
     url: 'polos/basic polo.jpg',
   },
   {
+    id:`${shirts.length+2+t_shirts.length}`,
     name: 'Basic Short-sleeved polo',
     old_price: 700.00,
     new_price: 299.00,
     url: 'polos/Basic Short-sleeved Button-down polo.webp',
   },
   {
+    id:`${shirts.length+3+t_shirts.length}`,
     name: 'Short Sleeve Polo',
     old_price: 900.00,
     new_price: 499.00,
     url: 'polos/Short Sleeve Polo with Arm Pocket.webp',
   },
   {
+    id:`${shirts.length+4+t_shirts.length}`,
     name: 'long sleeve buttonless polo',
     old_price: 800.00,
     new_price: 399.00,
     url: 'polos/long sleeve buttonless polo.jpg',
   },
   {
+    id:`${shirts.length+5+t_shirts.length}`,
     name: 'long sleeve cashmeer polo',
     old_price: 999.00,
     new_price: 499.00,
     url: 'polos/long sleeve cashmeer polo.jpg',
   },
   {
+    id:`${shirts.length+6+t_shirts.length}`,
     name: 'long sleeve velvet polo',
     old_price: 1200.00,
     new_price: 699.00,
     url: 'polos/long sleeve velvet polo.jpg',
   },
   {
+    id:`${shirts.length+7+t_shirts.length}`,
     name: 'long sleeve trico polo',
     old_price: 600.00,
     new_price: 299.00,
     url: 'polos/long sleeve trico polo.webp',
   },
   {
+    id:`${shirts.length+8+t_shirts.length}`,
     name: 'oversize polo',
     old_price: 800.00,
     new_price: 399.00,
     url: 'polos/oversize polo.webp',
   },
   {
+    id:`${shirts.length+9+t_shirts.length}`,
     name: 'smart casual polo',
     old_price: 900.00,
     new_price: 499.00,
@@ -236,16 +253,55 @@ const rowObserver = new IntersectionObserver((entries, obs) => {
     obs.unobserve(entry.target); // run once per row
   });
 }, { threshold: 0.15 });
+
 const base_collections_url = '../assets/images/collection/'
-const rows = Math.ceil((shirts.length + t_shirts.length + polos.length) / 4), cols = 4
-const heroContent = document.querySelectorAll('.hero-content > *');
-const productsHeroContent = document.querySelectorAll('.products-hero-content > *');
-const collection_container = document.getElementById('products-section')
-const swiperCardsContainer = document.getElementById('swiper-cards-container')
-const swiperCardsNUmber = 6
-const blogsContainer = document.getElementById('blogs-section')
-const blogRows = Math.ceil(blogs.length / 2)
+, rows = Math.ceil((shirts.length + t_shirts.length + polos.length) / 4), cols = 4
+, heroContent = document.querySelectorAll('.hero-content > *')
+, productsHeroContent = document.querySelectorAll('.products-hero-content > *')
+, collection_container = document.getElementById('products-section')
+, swiperCardsContainer = document.getElementById('swiper-cards-container')
+, swiperCardsNUmber = 6
+, blogsContainer = document.getElementById('blogs-section')
+, blogRows = Math.ceil(blogs.length / 2)
+
 // functions
+function removeItemFromCart(e) {
+  if (e.target.classList.contains("remove-from-cart")) {
+    const item = e.target.closest(".cart-card")        
+    item.remove()
+    const name = item.querySelector("h6").textContent
+    console.log(name)
+    cartItems = cartItems.filter(p => p.name !== name)
+    updateCartItems(cartItems);
+  }
+}
+function fillCartwithItems(){
+  cartItems.forEach((product) =>{
+  const cartCard = document.createElement('div'), cartList = document.getElementById('cartItemsList')
+  cartCard.className = 'cart-card w-100'
+  cartCard.innerHTML = `
+    <img src="${base_collections_url}${product.url}" class="cart-img" alt="${product.name}">
+    <div class="cart-info">
+      <h6>${product.name}</h6>
+      <p>${product.new_price} EGP</p>
+      <p>Size: ${product.size}</p>
+    </div>
+    <button class="remove-from-cart btn btn-danger fs-small btn-sm">remove</button>
+  `
+  cartList.appendChild(cartCard)  
+  })
+}
+function LoadCartItems (){
+  try{
+    return JSON.parse(localStorage.getItem('cartItems')) || []
+  }
+  catch{
+    return []
+  }
+}
+function updateCartItems(cartItems){
+  localStorage.setItem('cartItems' , JSON.stringify(cartItems))
+}
 function staggerAppear(elements, baseDelay, stepDelay) {
   elements.forEach((el, idx) => {
     setTimeout(() => {
@@ -257,9 +313,9 @@ function reset_products_indeices(){
   for(let it = 0 ; it < products.length ; it++)
     products[it].index = 0
 }
-function makeCard(productUrl , productName , productOld_price , productNew_price){
+function makeCard(productUrl , productName , productOld_price , productNew_price , product_id){
   return`
-  <div class="card border-0  m-0 h-100">
+  <div data-id='${product_id}' class="card border-0 m-0 h-100">
       <div class="card-img h-100 m-0">
         <img src="${base_collections_url}${productUrl}" alt="">
         <div class="card-img-overlay d-flex flex-column justify-content-end p-0">
@@ -298,9 +354,9 @@ function makeBlogCard(title , url , content){
       </article>
   `
 }
-function makeSwiperCard(productUrl , productName , productOld_price , productNew_price){
+function makeSwiperCard(productUrl , productName , productOld_price , productNew_price , product_id){
   return`
-  <div class="card m-0">
+  <div data-id="${product_id}" class="card m-0">
   <img class="card-img m-0" src="${base_collections_url}${productUrl}" alt="">
   <div class="card-img-overlay d-flex flex-column justify-content-end p-0">
       <div class="overlay-content bg-orange-overlay text-black text-center ">
@@ -335,7 +391,7 @@ function fillSwiper(){
     }
     if (!product)
       break
-    swiperCard.innerHTML = makeSwiperCard(product.url , product.name , product.old_price , product.new_price) 
+    swiperCard.innerHTML = makeSwiperCard(product.url , product.name , product.old_price , product.new_price ,product.id) 
     swiperCardsContainer.appendChild(swiperCard)
   }  
 }
@@ -362,7 +418,7 @@ function fillProductsPage(){
       }
 
       if (!product) break
-      col.innerHTML = makeCard(product.url , product.name , product.old_price , product.new_price)
+      col.innerHTML = makeCard(product.url , product.name , product.old_price , product.new_price , product.id)
       row.appendChild(col)
     }
 
@@ -380,7 +436,6 @@ function fillBlogsPage(){
       col.className = 'col-8 col-lg-6 col-xxl-5'
       let product = blogs[index]
       index += 1
-      console.log(product.url)
       if (!product)
         break
       col.innerHTML = makeBlogCard(product.title , product.url, product.content)
@@ -391,17 +446,75 @@ function fillBlogsPage(){
 }
 function logOut () {
   localStorage.removeItem('currentUser')
+  localStorage.removeItem('cartItems')
   location.reload()
-  // console.log(1)
 }
+function addInCart(event){
+  const btn = event.target , card =  btn.closest('.card') 
+  , cartList = document.getElementById('cartItemsList'), id = card.getAttribute('data-id') 
+  , allProducts = [...shirts , ...t_shirts , ...polos], product = allProducts.find(p => p.id === id)
+  if (!currentUser){
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "You must be login first",
+      footer: '<a href="../pages/login.html">Go Login</a>',
+      showConfirmButton: false,   
+      allowOutsideClick: true, 
+      allowEscapeKey: true   
+    })
+  }
+  Swal.fire({
+    title: "Choose Size",
+    input: "select",
+    inputOptions: {
+      Xsmall: "XS",
+      small: "S",
+      medium: "M",
+      large: "L",
+      Xlarge: "XL"
+    },
+    inputPlaceholder: "Select a size",
+    showCancelButton: true,
+    confirmButtonText: "OK",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire(`You chose ${product.name} with size: ${result.value}`);
+      product.size = result.value
+      const cartCard = document.createElement('div')
+      cartCard.className = 'cart-card w-100'
+      cartCard.innerHTML = `
+        <img src="${base_collections_url}${product.url}" class="cart-img" alt="${product.name}">
+        <div class="cart-info">
+          <h6>${product.name}</h6>
+          <p>${product.new_price} EGP</p>
+          <p>Size: ${product.size}</p>
+        </div>
+        <button class="remove-from-cart btn btn-danger fs-small btn-sm">remove</button>
+      `
+      cartList.appendChild(cartCard)
+      cartItems.push(product)
+      updateCartItems(cartItems)
+    }
+  });
+}
+
 
 if (window.location.pathname.includes('home.html')){
   staggerAppear(heroContent, 1000, 800);
   fillSwiper()
+  const addInCartBtns = document.querySelectorAll('.add-in-cart')
+  addInCartBtns.forEach((btn) =>{
+    btn.addEventListener('click',addInCart)
+  })
 }
 if (window.location.pathname.includes('products.html')){
   staggerAppear(productsHeroContent, 1000, 800);
   fillProductsPage()
+  const addInCartBtns = document.querySelectorAll('.add-in-cart')
+  addInCartBtns.forEach((btn) =>{
+    btn.addEventListener('click',addInCart)
+  })
 }
 if (window.location.pathname.includes('blog.html')){
   fillBlogsPage()

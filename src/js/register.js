@@ -13,7 +13,7 @@ function getStoredUsers() {
 
 function saveStoredUsers(users) {
     localStorage.setItem("users", JSON.stringify(users));
-  }
+}
 function setCurrentUser(currUser){
     localStorage.setItem('currentUser' , JSON.stringify(currUser))
 }
@@ -58,6 +58,7 @@ if(window.location.pathname.includes('signup.html')){
         confirmButtonText: "OK",
       }).then((result) => {
         if (result.isConfirmed) {
+          localStorage.removeItem('cartItems')
           window.location.href = '../pages/home.html';
         }
       });
@@ -81,6 +82,7 @@ if (window.location.pathname.includes('login.html')) {
           confirmButtonText: "OK",
         }).then((result) => {
           if (result.isConfirmed) {
+            localStorage.removeItem('cartItems')
             window.location.href = '../pages/home.html';
           }
         });
