@@ -42,11 +42,13 @@ fetch("../components/header.html").then(response => response.text()).then(data =
       document.getElementById('loginBtn').classList.add('hidden')
       document.getElementById('signUpBtn').classList.add('hidden')
       document.getElementById('logOutBtn').classList.remove('hidden')
+      document.getElementById('welcome-msg').textContent = `welcome ${currentUser.email.split('@')[0]}`
     }
     else{
       document.getElementById('loginBtn').classList.remove('hidden')
       document.getElementById('signUpBtn').classList.remove('hidden')
-      document.getElementById('logOutBtn').classList.add('hidden')      
+      document.getElementById('logOutBtn').classList.add('hidden') 
+      document.getElementById('welcome-msg').textContent = ''     
     }
     document.getElementById('logOutBtn').addEventListener('click' , logOut)
     fillCartwithItems()
