@@ -534,7 +534,7 @@ function fillProductsPage(){
 
   for (let i = 0; i < rows; i++) {
     const row = document.createElement('div')
-    row.className = 'row pt-5 gy-5 w-100 d-flex justify-content-evenly' 
+    row.className = 'row-lg d-flex flex-colmun flex-wrap pt-5 gy-5 w-100 d-flex justify-content-evenly' 
 
     for (let j = 0; j < cols; j++) {
       const col = document.createElement('div')
