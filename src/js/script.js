@@ -42,7 +42,7 @@ fetch("../components/header.html").then(response => response.text()).then(data =
       document.getElementById('loginBtn').classList.add('hidden')
       document.getElementById('signUpBtn').classList.add('hidden')
       document.getElementById('logOutBtn').classList.remove('hidden')
-      document.getElementById('welcome-msg').textContent = `welcome ${currentUser.email.split('@')[0]}`
+      // document.getElementById('welcome-msg').textContent = `welcome ${currentUser.email.split('@')[0]}`
     }
     else{
       document.getElementById('loginBtn').classList.remove('hidden')
@@ -282,6 +282,15 @@ function checkout () {
       footer: '<a href="../pages/signup.html">Go create accout</a>'
     });
     return
+  }  
+  if(cartItems.length == 0){
+    Swal.fire({
+      icon: "error",
+      title: "checkout faild",
+      text: "there is nothing in your cart",
+      footer: '<a href="../pages/products.html">Go shopping first</a>'
+    });
+    return
   }
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -515,7 +524,6 @@ function removeItemFromCart(e) {
     }
   });
 }
-
 function fillCartwithItems(){
   cartItems.forEach((product) =>{
   const cartCard = document.createElement('div'), cartList = document.getElementById('cartItemsList')
@@ -596,7 +604,6 @@ function makeBlogCard(title, url, content){
       </article>
   `;
 }
-
 function makeSwiperCard(productUrl , productName , productOld_price , productNew_price , product_id){
   return`
   <div data-id="${product_id}" class="card m-0">
@@ -609,7 +616,7 @@ function makeSwiperCard(productUrl , productName , productOld_price , productNew
   </div>
 
   <div class="card-content d-flex flex-column align-items-center p-3">
-    <h2 class="text-black fs-4">${productName}</h2>
+    <h2 class="text-black height-fit-content fs-6">${productName}</h2>
     <div class="d-flex gap-3">
         <span style="text-decoration: line-through;">${productOld_price} LE</span>
         <span class="text-orange">${productNew_price} LE</span>
@@ -622,7 +629,7 @@ function fillSwiper(){
   reset_products_indeices()
   for (let i = 0; i < swiperCardsNUmber ; i++) {
     const swiperCard = document.createElement('div')
-    swiperCard.className = 'swiper-slide'
+    swiperCard.className = 'swiper-slide mb-4'
     let product = undefined
     while (!product) {
       if (products[0].index >= polos.length && products[1].index >= shirts.length && products[2].index >= t_shirts.length)
