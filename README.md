@@ -17,21 +17,6 @@ It simulates basic e-commerce functionality with **cart, login, signup, and UI c
 - 100% frontend → no real backend.
 
 ---
-## 📂 Project Structure
-
-```plaintext
-project/
-│── index.html              # Main entry point
-│── README.md               # Project documentation
-│── structure.txt           # Extra notes about structure
-│
-└── src/                    # Source files
-    │── /assets             # Images, fonts, icons, etc.
-    │── /components         # Reusable parts (header, footer, etc.)
-    │── /pages              # HTML pages
-    │── /js                 # JavaScript files
-    │── /css                # Stylesheets
-```
 
 ## 🚀 How to Run
 1. Clone this repo.
@@ -50,6 +35,20 @@ project/
 **Ammar Alaa Omar**  
 [LinkedIn](https://www.linkedin.com/in/ammar-alaa-am77) | [GitHub](https://github.com/am-mar7)
 
+## 📂 Project Structure
+
+```plaintext
+project/
+│── index.html              # Main entry point
+│── README.md               # Project documentation
+│── structure.txt           # Extra notes about structure
+│
+└── src/                    # Source files
+    │── /assets             # Images, fonts, icons, etc.
+    │── /components         # Reusable parts (header, footer, etc.)
+    │── /pages              # HTML pages
+    │── /js                 # JavaScript files
+    │── /css                # Stylesheets
 
 
-
+---
