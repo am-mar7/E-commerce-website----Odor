@@ -18,13 +18,21 @@ It simulates basic e-commerce functionality with **cart, login, signup, and UI c
 
 ---
 
-## 📂 Structure
+## 📂 Project Structure
+
+```plaintext
 project/
-│── index.html
-│── /assets
-│── /components (header, footer, etc.)
-│── /js
-│── README.md
+│── index.html              # Main entry point
+│── README.md               # Project documentation
+│── structure.txt           # Extra notes about structure
+│
+└── src/                    # Source files
+    │── /assets             # Images, fonts, icons, etc.
+    │── /components         # Reusable parts (header, footer, etc.)
+    │── /pages              # HTML pages
+    │── /js                 # JavaScript files
+    │── /css                # Stylesheets
+
 
 ---
 
