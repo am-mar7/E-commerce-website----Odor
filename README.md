@@ -18,6 +18,23 @@ It simulates basic e-commerce functionality with **cart, login, signup, and UI c
 
 ---
 
+## 🚀 How to Run
+1. Clone this repo.
+2. Open `index.html` in your browser.
+3. Done ✅
+
+---
+
+## 📌 Notes
+- LocalStorage is used to act like a backend (storing users & cart data).
+- This is just a simulation project for learning/practice purposes.
+
+---
+
+## 👨‍💻 Author
+**Ammar Alaa Omar**  
+[LinkedIn](https://www.linkedin.com/in/ammar-alaa-am77) | [GitHub](https://github.com/am-mar7)
+
 ## 📂 Project Structure
 
 ```plaintext
@@ -35,20 +52,3 @@ project/
 
 
 ---
-
-## 🚀 How to Run
-1. Clone this repo.
-2. Open `index.html` in your browser.
-3. Done ✅
-
----
-
-## 📌 Notes
-- LocalStorage is used to act like a backend (storing users & cart data).
-- This is just a simulation project for learning/practice purposes.
-
----
-
-## 👨‍💻 Author
-**Ammar Alaa Omar**  
-[LinkedIn](https://www.linkedin.com/in/ammar-alaa-am77) | [GitHub](https://github.com/am-mar7)  
