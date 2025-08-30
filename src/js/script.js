@@ -64,6 +64,19 @@ fetch("../components/header.html").then(response => response.text()).then(data =
 
 fetch("../components/footer.html").then(response => response.text()).then(data => {
   document.querySelector('footer').innerHTML = data
+  const btn = document.getElementById("backToTop");
+
+  window.addEventListener("scroll", () => {
+    if (document.documentElement.scrollTop > 200) {
+      btn.style.display = "flex";
+    } else {
+      btn.style.display = "none";
+    }
+  });
+
+  btn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 })
 // vars 
 
@@ -969,6 +982,7 @@ if (window.location.pathname.includes('products.html')){
 if (window.location.pathname.includes('blog.html')){
   fillBlogsPage()
 }
+
 
 
 

@@ -64,6 +64,27 @@ a{
     -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.5); /* border thickness and color */
   }
   
+  #backToTop {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: orange;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    display: none; /* يبان بس بعد ما ننزل */
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: opacity 0.3s ease;
+  }
+  #backToTop:hover {
+    opacity: 0.8;
+  }
 /* ====================================================key frames===================================================== */
 @keyframes changeBg {
     0%   {background-image: url(../assets/images/bgs/bg4.jpg);}
@@ -87,14 +108,7 @@ a{
     
 }
 /* ============================================================================================================== */
-/* navbar */
-/* .menu-cart{
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: start;
-    background-color: cyan;
-} */
+
 @media (min-width:800px) {
     .navbar-collapse{
         margin-left: calc(30px + 3vw);
