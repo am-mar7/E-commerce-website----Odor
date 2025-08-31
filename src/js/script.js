@@ -411,7 +411,8 @@ function checkout () {
   CartElemnets.length = 0;   // clear array references
   cartItems = []
   updateCartItems(cartItems)  
-  document.getElementById('cartSubtotal').textContent = '0'}
+  document.getElementById('cartSubtotal').textContent = '0'
+}
 
 function clearAllCart(){
   const swalWithBootstrapButtons = Swal.mixin({
@@ -603,7 +604,8 @@ function fillCartwithItems(){
   cartItems.forEach((product) =>{
     const cartCard = document.createElement('div')
     const cartList = document.getElementById('cartItemsList')
-
+    const dataKey = `${product.id}__${String(product.color).toLowerCase()}__${String(product.size).toLowerCase()}`;
+    cartCard.dataset.key = dataKey
     cartCard.className = 'cart-card w-100'
     cartCard.innerHTML = `
       <img src="${base_collections_url}${product.url}" class="cart-img" alt="${product.name}">
@@ -821,7 +823,7 @@ function addInCart(event) {
         break;
       }
     }
-
+    // console.log(existingIndex)
     const subtotalEl = document.getElementById('cartSubtotal');
     const prevSubtotal = parseFloat(subtotalEl.textContent) || 0;
     const addedAmountValue = (price * Number(productForCart.amount || 1));
@@ -829,10 +831,11 @@ function addInCart(event) {
     if (existingIndex !== -1) {
       // update existing item quantity
       cartItems[existingIndex].amount = Number(cartItems[existingIndex].amount || 0) + Number(productForCart.amount);
-
+      // console.log(cartItems[existingIndex])
       // update DOM card: find matching card by data-key attribute
       const dataKey = key;
       const existingCard = cartList.querySelector(`.cart-card[data-key="${dataKey}"]`);
+      console.log(existingCard)
       if (existingCard) {
         // update amount text inside the card (assumes there is an element with class .cart-amount)
         const amountEl = existingCard.querySelector('.cart-amount');
