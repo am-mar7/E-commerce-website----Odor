@@ -286,6 +286,69 @@ const base_collections_url = '../assets/images/collection/'
 , CartElemnets = []
 
 // functions
+// making cards 
+function makeCard(productUrl , productName , productOld_price , productNew_price , product_id){
+  return`
+  <div data-id='${product_id}' class="card border-0 m-0 h-100">
+      <div class="card-img h-100 m-0">
+        <img src="${base_collections_url}${productUrl}" alt="">
+        <div class="card-img-overlay d-flex flex-column justify-content-end p-0">
+          <div class="overlay-content bg-orange-overlay text-black text-center ">
+              <button class="add-in-cart bg-transparent p-1 p-lg-2">Quick Add</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body  d-flex flex-column bg-light">
+          <h5 class="card-title text-center">${productName}</h5>
+          <p class="card-text d-flex justify-content-center gap-3">
+              <span style="text-decoration: line-through;">${productOld_price} LE</span>
+              <span class="text-orange">${productNew_price} LE</span>
+          </p>
+      </div>
+  </div>
+  `
+}
+function makeBlogCard(title, url, content){
+  return `
+  <article class="card h-100 shadow-sm">
+        <div class="ratio ratio-16x9 position-relative embed-cover">
+          <iframe
+            src="${url}"
+            title="${title}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+            class="border-0">
+          </iframe>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h1 class="card-title fs-5 mb-2">${title}</h1>
+          <p class="card-text text-muted mb-0">${content}</p>           
+        </div>
+      </article>
+  `;
+}
+function makeSwiperCard(productUrl , productName , productOld_price , productNew_price , product_id){
+  return`
+  <div data-id="${product_id}" class="card m-0">
+  <img class="card-img m-0" src="${base_collections_url}${productUrl}" alt="">
+  <div class="card-img-overlay d-flex flex-column justify-content-end p-0">
+      <div class="overlay-content bg-orange-overlay text-black text-center ">
+          <button class="add-in-cart bg-transparent p-1 p-1 p-lg-2">Quick Add</button>
+      </div>
+  </div>
+  </div>
+
+  <div class="card-content d-flex flex-column align-items-center p-3">
+    <h2 class="text-black height-fit-content fs-6">${productName}</h2>
+    <div class="d-flex gap-3">
+        <span style="text-decoration: line-through;">${productOld_price} LE</span>
+        <span class="text-orange">${productNew_price} LE</span>
+    </div>
+  </div>
+  `
+}
+// cart 
 function checkout () { 
   if(!currentUser){
     Swal.fire({
@@ -347,8 +410,9 @@ function clearCart(){
   CartElemnets.forEach((cart)=>{
     cart.remove()
   })
-  updateCartItems([]);
+  updateCartItems([]);  
   const cartSubtotal = document.getElementById('cartSubtotal')
+  cartItems = []
   cartSubtotal.textContent = '0'
 }
 function clearAllCart(){
@@ -544,9 +608,11 @@ function fillCartwithItems(){
   cartCard.innerHTML = `
     <img src="${base_collections_url}${product.url}" class="cart-img" alt="${product.name}">
     <div class="cart-info">
-      <h6>${product.name}</h6>
-      <p>${product.new_price} EGP</p>
-      <p>Size: ${product.size}</p>
+        <h6>${productForCart.name}</h6>
+        <p>${Number(productForCart.new_price).toFixed(2)} EGP</p>
+        <p>Color: <span class="color-dot" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${productForCart.color};margin-right:6px;vertical-align:middle;border:1px solid rgba(0,0,0,0.12)"></span>${productForCart.color}</p>
+        <p>Amount: <span class="cart-amount">${productForCart.amount}</span></p>
+        <p>Size: ${productForCart.size}</p>
     </div>
     <button class="remove-from-cart btn btn-danger fs-small btn-sm">remove</button>
   `
@@ -564,153 +630,6 @@ function LoadCartItems (){
 }
 function updateCartItems(cartItems){
   localStorage.setItem('cartItems' , JSON.stringify(cartItems))
-}
-function staggerAppear(elements, baseDelay, stepDelay) {
-  elements.forEach((el, idx) => {
-    setTimeout(() => {
-      el.classList.add('appear');
-    }, baseDelay + idx * stepDelay);
-  });
-}
-function reset_products_indeices(){
-  for(let it = 0 ; it < products.length ; it++)
-    products[it].index = 0
-}
-function makeCard(productUrl , productName , productOld_price , productNew_price , product_id){
-  return`
-  <div data-id='${product_id}' class="card border-0 m-0 h-100">
-      <div class="card-img h-100 m-0">
-        <img src="${base_collections_url}${productUrl}" alt="">
-        <div class="card-img-overlay d-flex flex-column justify-content-end p-0">
-          <div class="overlay-content bg-orange-overlay text-black text-center ">
-              <button class="add-in-cart bg-transparent p-1 p-lg-2">Quick Add</button>
-          </div>
-        </div>
-      </div>
-      <div class="card-body  d-flex flex-column bg-light">
-          <h5 class="card-title text-center">${productName}</h5>
-          <p class="card-text d-flex justify-content-center gap-3">
-              <span style="text-decoration: line-through;">${productOld_price} LE</span>
-              <span class="text-orange">${productNew_price} LE</span>
-          </p>
-      </div>
-  </div>
-  `
-}
-function makeBlogCard(title, url, content){
-  return `
-  <article class="card h-100 shadow-sm">
-        <div class="ratio ratio-16x9 position-relative embed-cover">
-          <iframe
-            src="${url}"
-            title="${title}"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            loading="lazy"
-            class="border-0">
-          </iframe>
-        </div>
-        <div class="card-body d-flex flex-column">
-          <h1 class="card-title fs-5 mb-2">${title}</h1>
-          <p class="card-text text-muted mb-0">${content}</p>           
-        </div>
-      </article>
-  `;
-}
-function makeSwiperCard(productUrl , productName , productOld_price , productNew_price , product_id){
-  return`
-  <div data-id="${product_id}" class="card m-0">
-  <img class="card-img m-0" src="${base_collections_url}${productUrl}" alt="">
-  <div class="card-img-overlay d-flex flex-column justify-content-end p-0">
-      <div class="overlay-content bg-orange-overlay text-black text-center ">
-          <button class="add-in-cart bg-transparent p-1 p-1 p-lg-2">Quick Add</button>
-      </div>
-  </div>
-  </div>
-
-  <div class="card-content d-flex flex-column align-items-center p-3">
-    <h2 class="text-black height-fit-content fs-6">${productName}</h2>
-    <div class="d-flex gap-3">
-        <span style="text-decoration: line-through;">${productOld_price} LE</span>
-        <span class="text-orange">${productNew_price} LE</span>
-    </div>
-  </div>
-  `
-}
-function fillSwiper(){
-  let products_idx = 0
-  reset_products_indeices()
-  for (let i = 0; i < swiperCardsNUmber ; i++) {
-    const swiperCard = document.createElement('div')
-    swiperCard.className = 'swiper-slide mb-4'
-    let product = undefined
-    while (!product) {
-      if (products[0].index >= polos.length && products[1].index >= shirts.length && products[2].index >= t_shirts.length)
-        break
-      const curr_catagory = products[products_idx]
-      product = curr_catagory.data[curr_catagory.index]
-      curr_catagory.index += 1
-      products_idx = (products_idx + 1) % products.length
-    }
-    if (!product)
-      break
-    swiperCard.innerHTML = makeSwiperCard(product.url , product.name , product.old_price , product.new_price ,product.id) 
-    swiperCardsContainer.appendChild(swiperCard)
-  }  
-}
-function fillProductsPage(){
-  let products_idx = 0
-  reset_products_indeices()
-
-  for (let i = 0; i < rows; i++) {
-    const row = document.createElement('div')
-    row.className = 'row-lg d-flex flex-colmun flex-wrap pt-5 gy-5 w-100 d-flex justify-content-evenly' 
-
-    for (let j = 0; j < cols; j++) {
-      const col = document.createElement('div')
-      col.className = 'col-8 col-sm-5 col-lg-3 col-xl-3 col-xxl-2 col-animate'
-      let product = undefined
-
-      while (!product) {
-        if (products[0].index >= polos.length && products[1].index >= shirts.length && products[2].index >= t_shirts.length)
-          break
-        const curr_catagory = products[products_idx]
-        product = curr_catagory.data[curr_catagory.index]
-        curr_catagory.index += 1
-        products_idx = (products_idx + 1) % products.length
-      }
-
-      if (!product) break
-      col.innerHTML = makeCard(product.url , product.name , product.old_price , product.new_price , product.id)
-      row.appendChild(col)
-    }
-
-    collection_container.appendChild(row)
-    rowObserver.observe(row)
-  }
-}
-function fillBlogsPage(){
-  index = 0
-  for (let i = 0; i < blogRows ; i++) {
-    const row = document.createElement('div')
-    row.className = 'row pt-5 gy-5 d-flex justify-content-evenly'
-    for (let j = 0; j < 2; j++) {
-      const col = document.createElement('div')
-      col.className = 'col-8 col-lg-6 col-xxl-5'
-      let product = blogs[index]
-      index += 1
-      if (!product)
-        break
-      col.innerHTML = makeBlogCard(product.title , product.url, product.content)
-      row.appendChild(col)
-    }
-    blogsContainer.appendChild(row)
-  }
-}
-function logOut () {
-  localStorage.removeItem('currentUser')
-  localStorage.removeItem('cartItems')
-  location.reload()
 }
 function addInCart(event) {
   const btn = event.target;
@@ -961,6 +880,93 @@ function addInCart(event) {
   });
 }
 
+
+function staggerAppear(elements, baseDelay, stepDelay) {
+  elements.forEach((el, idx) => {
+    setTimeout(() => {
+      el.classList.add('appear');
+    }, baseDelay + idx * stepDelay);
+  });
+}
+function reset_products_indeices(){
+  for(let it = 0 ; it < products.length ; it++)
+    products[it].index = 0
+}
+function fillSwiper(){
+  let products_idx = 0
+  reset_products_indeices()
+  for (let i = 0; i < swiperCardsNUmber ; i++) {
+    const swiperCard = document.createElement('div')
+    swiperCard.className = 'swiper-slide mb-4'
+    let product = undefined
+    while (!product) {
+      if (products[0].index >= polos.length && products[1].index >= shirts.length && products[2].index >= t_shirts.length)
+        break
+      const curr_catagory = products[products_idx]
+      product = curr_catagory.data[curr_catagory.index]
+      curr_catagory.index += 1
+      products_idx = (products_idx + 1) % products.length
+    }
+    if (!product)
+      break
+    swiperCard.innerHTML = makeSwiperCard(product.url , product.name , product.old_price , product.new_price ,product.id) 
+    swiperCardsContainer.appendChild(swiperCard)
+  }  
+}
+function fillProductsPage(){
+  let products_idx = 0
+  reset_products_indeices()
+
+  for (let i = 0; i < rows; i++) {
+    const row = document.createElement('div')
+    row.className = 'row-lg d-flex flex-colmun flex-wrap pt-5 gy-5 w-100 d-flex justify-content-evenly' 
+
+    for (let j = 0; j < cols; j++) {
+      const col = document.createElement('div')
+      col.className = 'col-8 col-sm-5 col-lg-3 col-xl-3 col-xxl-2 col-animate'
+      let product = undefined
+
+      while (!product) {
+        if (products[0].index >= polos.length && products[1].index >= shirts.length && products[2].index >= t_shirts.length)
+          break
+        const curr_catagory = products[products_idx]
+        product = curr_catagory.data[curr_catagory.index]
+        curr_catagory.index += 1
+        products_idx = (products_idx + 1) % products.length
+      }
+
+      if (!product) break
+      col.innerHTML = makeCard(product.url , product.name , product.old_price , product.new_price , product.id)
+      row.appendChild(col)
+    }
+
+    collection_container.appendChild(row)
+    rowObserver.observe(row)
+  }
+}
+function fillBlogsPage(){
+  index = 0
+  for (let i = 0; i < blogRows ; i++) {
+    const row = document.createElement('div')
+    row.className = 'row pt-5 gy-5 d-flex justify-content-evenly'
+    for (let j = 0; j < 2; j++) {
+      const col = document.createElement('div')
+      col.className = 'col-8 col-lg-6 col-xxl-5'
+      let product = blogs[index]
+      index += 1
+      if (!product)
+        break
+      col.innerHTML = makeBlogCard(product.title , product.url, product.content)
+      row.appendChild(col)
+    }
+    blogsContainer.appendChild(row)
+  }
+}
+function logOut () {
+  localStorage.removeItem('currentUser')
+  localStorage.removeItem('cartItems')
+  location.reload()
+}
 
 
 if (window.location.pathname.includes('home.html')){
