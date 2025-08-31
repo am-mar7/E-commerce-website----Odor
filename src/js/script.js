@@ -57,8 +57,8 @@ fetch("../components/header.html").then(response => response.text()).then(data =
     cartList.addEventListener("click", removeItemFromCart);
     clearCartBtn.addEventListener('click' , clearAllCart)
     checkoutBtn.addEventListener('click' , checkout)
-    total = cartItems.reduce((sum, { new_price }) => sum + new_price, 0);
-    cartSubtotal.textContent = total
+    total = cartItems.reduce((sum, { new_price, amount }) => sum + (new_price * amount), 0)
+    cartSubtotal.textContent = total.toFixed(2)
 })
   .catch(error => console.error("Error loading header:", error));
 
@@ -406,15 +406,13 @@ function checkout () {
     }
   });
  }
-function clearCart(){
-  CartElemnets.forEach((cart)=>{
-    cart.remove()
-  })
-  updateCartItems([]);  
-  const cartSubtotal = document.getElementById('cartSubtotal')
+ function clearCart(){
+  CartElemnets.forEach(cart => cart.remove())
+  CartElemnets.length = 0;   // clear array references
   cartItems = []
-  cartSubtotal.textContent = '0'
-}
+  updateCartItems(cartItems)  
+  document.getElementById('cartSubtotal').textContent = '0'}
+
 function clearAllCart(){
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -603,23 +601,32 @@ function removeItemFromCart(e) {
 }
 function fillCartwithItems(){
   cartItems.forEach((product) =>{
-  const cartCard = document.createElement('div'), cartList = document.getElementById('cartItemsList')
-  cartCard.className = 'cart-card w-100'
-  cartCard.innerHTML = `
-    <img src="${base_collections_url}${product.url}" class="cart-img" alt="${product.name}">
-    <div class="cart-info">
-        <h6>${productForCart.name}</h6>
-        <p>${Number(productForCart.new_price).toFixed(2)} EGP</p>
-        <p>Color: <span class="color-dot" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${productForCart.color};margin-right:6px;vertical-align:middle;border:1px solid rgba(0,0,0,0.12)"></span>${productForCart.color}</p>
-        <p>Amount: <span class="cart-amount">${productForCart.amount}</span></p>
-        <p>Size: ${productForCart.size}</p>
-    </div>
-    <button class="remove-from-cart btn btn-danger fs-small btn-sm">remove</button>
-  `
-  cartList.appendChild(cartCard)  
-  CartElemnets.push(cartCard)
+    const cartCard = document.createElement('div')
+    const cartList = document.getElementById('cartItemsList')
+
+    cartCard.className = 'cart-card w-100'
+    cartCard.innerHTML = `
+      <img src="${base_collections_url}${product.url}" class="cart-img" alt="${product.name}">
+      <div class="cart-info">
+          <h6>${product.name}</h6>
+          <p>${Number(product.new_price).toFixed(2)} EGP</p>
+          <p>
+            Color: <span class="color-dot"
+              style="display:inline-block;width:12px;height:12px;border-radius:50%;
+              background:${product.color};margin-right:6px;vertical-align:middle;
+              border:1px solid rgba(0,0,0,0.12)">
+            </span>${product.color}
+          </p>
+          <p>Amount: <span class="cart-amount">${product.amount}</span></p>
+          <p>Size: ${product.size}</p>
+      </div>
+      <button class="remove-from-cart btn btn-danger fs-small btn-sm">remove</button>
+    `
+    cartList.appendChild(cartCard)  
+    CartElemnets.push(cartCard)
   })
 }
+
 function LoadCartItems (){
   try{
     return JSON.parse(localStorage.getItem('cartItems')) || []
